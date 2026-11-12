@@ -7,13 +7,18 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-
 RUN pip install --no-cache-dir --upgrade pip
+
+# numpy أولاً، ثم نسخة CPU فقط من torch
+RUN pip install --no-cache-dir "numpy==1.26.4"
+RUN pip install --no-cache-dir torch==2.1.2 torchaudio==2.1.2 \
+    --index-url https://download.pytorch.org/whl/cpu
+
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# إذا لم يكن numpy أو torch يعمل، يفشل البناء هنا وليس وقت التشغيل
-RUN python -c "import numpy, torch, torchaudio, demucs; print('OK', numpy.__version__, torch.__version__)"
+# تنزيل نموذج Demucs أثناء البناء حتى لا يتأخر أول فيديو
+RUN python -c "from demucs.pretrained import get_model; get_model('htdemucs')"
 
 COPY . .
 
