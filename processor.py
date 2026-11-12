@@ -1,3 +1,4 @@
+import sys
 import subprocess
 from pathlib import Path
 
@@ -24,7 +25,7 @@ def process_video(video_path, work_dir):
     audio_path = work_dir / "input.wav"
     output_dir = work_dir / "separated"
 
-    # Extract audio from video
+    # استخراج الصوت من الفيديو
     run_command([
         "ffmpeg", "-y",
         "-i", str(video_path),
@@ -34,12 +35,14 @@ def process_video(video_path, work_dir):
         str(audio_path)
     ])
 
-    # Separate voice and music using Demucs
+    # فصل الصوت عن الموسيقى
     run_command([
-        "python", "-m", "demucs",
+        sys.executable, "-m", "demucs",
         "--two-stems=vocals",
         "-n", "htdemucs",
         "--device", "cpu",
+        "--segment", "6",
+        "-j", "1",
         "-o", str(output_dir),
         str(audio_path)
     ])
@@ -52,7 +55,7 @@ def process_video(video_path, work_dir):
     if not vocals.exists() or not music.exists():
         raise FileNotFoundError("Separated audio files not found")
 
-    # Create video with voice only
+    # فيديو بالكلام فقط
     clean_video = work_dir / "Video_No_Music.mp4"
 
     run_command([
@@ -68,7 +71,7 @@ def process_video(video_path, work_dir):
         str(clean_video)
     ])
 
-    # Export extracted music as MP3
+    # تصدير الموسيقى MP3
     music_file = work_dir / "Extracted_Music.mp3"
 
     run_command([
