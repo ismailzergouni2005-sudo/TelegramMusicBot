@@ -1,6 +1,12 @@
 import sys
 import subprocess
+import os
+import certifi
+
+os.environ["SSL_CERT_FILE"] = certifi.where()
+os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 from pathlib import Path
+
 
 
 def run_command(command):
