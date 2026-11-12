@@ -8,7 +8,14 @@ ENV PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     git \
+    ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir --upgrade pip certifi
+
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 
 RUN pip install --no-cache-dir --upgrade pip
 
