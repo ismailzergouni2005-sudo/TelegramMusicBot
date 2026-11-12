@@ -27,8 +27,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # تنزيل النموذج أثناء البناء، وإذا فشل سيظهر السبب الحقيقي في Build Logs
-RUN python -c "import numpy; from demucs.pretrained import get_model; get_model('htdemucs'); print('MODEL OK')"
-
+RUN python -c "import ssl; ssl._create_default_https_context = ssl._create_unverified_context; from demucs.pretrained import get_model; get_model('htdemucs'); print('MODEL OK')"
 COPY . .
 
 CMD ["python", "bot.py"]
