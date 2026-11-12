@@ -18,6 +18,7 @@ from processor import process_video
 
 
 logging.basicConfig(
+    logging.getLogger("httpx").setLevel(logging.WARNING)
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.INFO
 )
